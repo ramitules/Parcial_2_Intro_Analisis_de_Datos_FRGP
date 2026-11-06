@@ -10,6 +10,8 @@ import java.io.IOException;
 @WebServlet("/ServletFormulario")
 public class ServletFormulario extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	
+	private static final int ANIOS = 3;
        
     public ServletFormulario() {
         super();
@@ -20,22 +22,43 @@ public class ServletFormulario extends HttpServlet {
 	}
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		float anioUno, anioDos, anioTres;
+		float[] bancoProvincia = new float[ANIOS];
+		float[] bancoNacion = new float[ANIOS];
+		float[] bancoHipotecario = new float[ANIOS];
+		
+		// Obtener datos de inputs
 		try {
-			anioUno = Float.parseFloat(request.getParameter("anioUno"));
-			anioDos = Float.parseFloat(request.getParameter("anioDos"));
-			anioTres = Float.parseFloat(request.getParameter("anioTres"));
-		} catch (Exception e) {
+			for (int i = 0; i < ANIOS; i ++) {
+				bancoProvincia[i] = Float.parseFloat(request.getParameter("txtBPAnio" + (i + 1)));
+				bancoNacion[i] = Float.parseFloat(request.getParameter("txtBNAnio" + (i + 1)));
+				bancoHipotecario[i] = Float.parseFloat(request.getParameter("txtBHAnio" + (i + 1)));
+			}
+		} catch (Exception e){
 			return;
 		}
 		
-		float total = calcularPromedio(anioUno, anioDos, anioTres);
+		// Calcular promedios
+		float BPTotal = calcularPromedioAnual(bancoProvincia);
+		float BNTotal = calcularPromedioAnual(bancoNacion);
+		float BHTotal = calcularPromedioAnual(bancoHipotecario);
 		
-		request.setAttribute("promedio", total);
+		request.setAttribute("BPPromedio", String.format("%.2f", BPTotal));
+		request.setAttribute("BNPromedio", String.format("%.2f", BNTotal));
+		request.setAttribute("BHPromedio", String.format("%.2f", BHTotal));
 		request.getRequestDispatcher("Formulario.jsp").forward(request, response);
 	}
+	
+	private float calcularPromedioAnual(float... anios) {
+		float total = 0.0f;
+		
+		if (anios.length != ANIOS) {
+			return total;
+		}
 
-	private float calcularPromedio(float anioUno, float anioDos, float anioTres) {
-		return (anioUno + anioDos + anioTres) / 3;
+		for (float f : anios) {
+			total += f;
+		}
+		
+		return total / ANIOS;
 	}
 }
