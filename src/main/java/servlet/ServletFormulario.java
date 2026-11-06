@@ -6,6 +6,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 
 @WebServlet("/ServletFormulario")
 public class ServletFormulario extends HttpServlet {
@@ -25,6 +27,7 @@ public class ServletFormulario extends HttpServlet {
 		float[] bancoProvincia = new float[ANIOS];
 		float[] bancoNacion = new float[ANIOS];
 		float[] bancoHipotecario = new float[ANIOS];
+		float monto = Float.parseFloat(request.getParameter("txtMonto"));
 		
 		// Obtener datos de inputs
 		try {
@@ -45,6 +48,21 @@ public class ServletFormulario extends HttpServlet {
 		request.setAttribute("BPPromedio", String.format("%.2f", BPTotal));
 		request.setAttribute("BNPromedio", String.format("%.2f", BNTotal));
 		request.setAttribute("BHPromedio", String.format("%.2f", BHTotal));
+		
+		request.setAttribute("BPAnual", montoAnual(BPTotal, monto));
+		request.setAttribute("BNAnual", montoAnual(BNTotal, monto));
+		request.setAttribute("BHAnual", montoAnual(BHTotal, monto));
+		
+		request.setAttribute("BPTrimestral", montoTrimestral(BPTotal, monto));
+		request.setAttribute("BNTrimestral", montoTrimestral(BNTotal, monto));
+		request.setAttribute("BHTrimestral", montoTrimestral(BHTotal, monto));
+		
+		request.setAttribute("BPMensual", montoMensual(BPTotal, monto));
+		request.setAttribute("BNMensual", montoMensual(BNTotal, monto));
+		request.setAttribute("BHMensual", montoMensual(BHTotal, monto));
+		
+		request.setAttribute("MasConveniente", masConveniente(BPTotal, BNTotal, BHTotal));
+		
 		request.getRequestDispatcher("Formulario.jsp").forward(request, response);
 	}
 	
@@ -60,5 +78,43 @@ public class ServletFormulario extends HttpServlet {
 		}
 		
 		return total / ANIOS;
+	}
+	
+	private String masConveniente(float bancoProvincia, float bancoNacion, float bancoHipotecario) {
+		if (bancoProvincia > bancoNacion && bancoProvincia > bancoHipotecario) {
+			return "Banco Provincia";
+		}
+		if (bancoNacion > bancoProvincia && bancoNacion > bancoHipotecario) {
+			return "Banco Nacion";
+		}
+		
+		return "Banco Hipotecario";
+	}
+	
+	private float montoAnual(float tasaBanco, float monto) {
+		return monto * ((tasaBanco / 100.0f) + 1.0f);
+	}
+	
+	private float montoTrimestral(float tasaBanco, float monto) {
+		int TRIMESTRES = 4;
+		float total = monto;
+		float tasaTrimestral = tasaBanco / 100.0f / TRIMESTRES;
+		
+		for (int i = 0; i < TRIMESTRES; i++) {
+			total += total * tasaTrimestral;
+		}
+		
+		return total;
+	}
+	
+	private float montoMensual(float tasaBanco, float monto) {
+		float total = monto;
+		float tasaMensual = tasaBanco / 12 / 100;
+		
+		for (int i = 0; i < 12; i++) {
+			total += (total * tasaMensual);
+		}
+		
+		return total;
 	}
 }
