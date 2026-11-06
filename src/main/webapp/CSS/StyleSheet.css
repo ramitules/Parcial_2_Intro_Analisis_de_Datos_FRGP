@@ -23,3 +23,7 @@ h3 {
     font-size: 17px;
     color: #000040;
 }
+
+.btnCalcular {
+	margin: 10px 10px 10px 20px;
+}
