@@ -32,7 +32,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr>
+					<tr <%= "Banco Provincia".equals(request.getAttribute("MasConveniente")) ? "class=\"masConveniente\"" : "" %>>
 						<td>Banco Provincia</td>
 						<td><input type="number" required name="txtBPAnio1"></td>
 						<td><input type="number" required name="txtBPAnio2"></td>
@@ -44,7 +44,7 @@
 							<td class="resultado"><%= request.getAttribute("BPMensual") %></td>
 						<%} %>
 					</tr>
-					<tr>
+					<tr <%= "Banco Nacion".equals(request.getAttribute("MasConveniente")) ? "class=\"masConveniente\"" : "" %>>
 						<td>Banco Nacion</td>
 						<td><input type="number" required name="txtBNAnio1"></td>
 						<td><input type="number" required name="txtBNAnio2"></td>
@@ -56,7 +56,7 @@
 							<td class="resultado"><%= request.getAttribute("BNMensual") %></td>
 						<%} %>
 					</tr>
-					<tr>
+					<tr <%= "Banco Hipotecario".equals(request.getAttribute("MasConveniente")) ? "class=\"masConveniente\"" : "" %>>
 						<td>Banco Hipotecario</td>
 						<td><input type="number" required name="txtBHAnio1"></td>
 						<td><input type="number" required name="txtBHAnio2"></td>
@@ -70,7 +70,7 @@
 					</tr>
 				</tbody>
 			</table>
-			<input type="submit" name="btnCalcular" value="Calcular">
+			<input type="submit" class="btnCalcular" name="btnCalcular" value="Calcular">
 			<% if (calculado) {%>
 				<label>Tu opcion mas conveniente por rentabilidad es <%= request.getAttribute("MasConveniente") %></label>
 			<%} %>
